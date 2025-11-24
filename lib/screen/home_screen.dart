@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 import '../constants.dart';
 
-// Model Data Dummy
+// Model Data Dummy (diambil dari constants.dart jika ada, tetapi diulang di sini untuk kemudahan)
 class Event {
   final String title;
   final String description;
   final Color color;
-
   Event(this.title, this.description, this.color);
 }
-
 final List<Event> dummyEvents = [
   Event('Switch Fest', 'Ajak semua temanmu untuk bersenang-senang, malam ini...', kPrimaryColor),
   Event('ComFest', 'All questions and generative insights from any domain, with our...', kSecondaryColor),
   Event('Manajemen Fest', 'All questions and generative insights from any domain, with our...', const Color(0xFF8E44AD)),
   Event('Saintek Fest', 'All questions and generative insights from any domain, with our...', const Color(0xFF3498DB)),
 ];
+
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -30,21 +29,26 @@ class HomeScreen extends StatelessWidget {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: kDefaultPadding / 2),
-            child: Row(
-              children: [
-                const CircleAvatar(
-                  backgroundColor: Colors.white,
-                  child: Icon(Icons.person, color: kPrimaryColor),
-                ),
-                const SizedBox(width: 8),
-                const Text(
-                  'Thalita Azalia',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
+            child: GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, '/profile');
+              },
+              child: const Row(
+                children: [
+                  CircleAvatar(
+                    backgroundColor: Colors.white,
+                    child: Icon(Icons.person, color: kPrimaryColor),
                   ),
-                ),
-              ],
+                  SizedBox(width: 8),
+                  Text(
+                    'Thalita Azalia',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
             ),
           )
         ],
@@ -74,38 +78,32 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: _buildBottomNavBar(),
+      bottomNavigationBar: _buildBottomNavBar(context),
     );
   }
 
-  Widget _buildBottomNavBar() {
+  Widget _buildBottomNavBar(BuildContext context) {
     return BottomNavigationBar(
       items: const <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.cloud_upload),
-          label: 'Upload',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: 'Profile',
-        ),
+        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+        BottomNavigationBarItem(icon: Icon(Icons.cloud_upload), label: 'Upload'),
+        BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
       ],
       currentIndex: 0,
       selectedItemColor: kPrimaryColor,
       unselectedItemColor: Colors.grey,
       showUnselectedLabels: true,
       onTap: (index) {
-        // TODO: Implementasi Navigasi Bottom NavBar
+        if (index == 1) {
+          Navigator.pushNamed(context, '/upload');
+        } else if (index == 2) {
+          Navigator.pushNamed(context, '/profile');
+        }
       },
     );
   }
 }
 
-// Widget Pendukung Card Event
 class EventCard extends StatelessWidget {
   final Event event;
 
@@ -130,13 +128,12 @@ class EventCard extends StatelessWidget {
         ),
         child: InkWell(
           onTap: () {
-            // TODO: Aksi detail event
+            Navigator.pushNamed(context, '/detail');
           },
           borderRadius: BorderRadius.circular(15),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              // Garis Warna di Kiri
               Container(
                 width: 10,
                 height: 150,
@@ -148,8 +145,6 @@ class EventCard extends StatelessWidget {
                   ),
                 ),
               ),
-
-              // Konten Event
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(kDefaultPadding),
@@ -176,7 +171,9 @@ class EventCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 10),
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/detail');
+                        },
                         child: Text(
                           'Lihat selengkapnya >',
                           style: TextStyle(color: event.color, fontWeight: FontWeight.bold),

@@ -4,7 +4,6 @@ import '../constants.dart';
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
-  // Widget pembantu untuk input field
   Widget _buildInputField({
     required String hintText,
     required IconData icon,
@@ -78,14 +77,12 @@ class LoginScreen extends StatelessWidget {
               ),
               const SizedBox(height: 50),
 
-              // Input Email
               _buildInputField(
                 hintText: 'Masukkan Email',
                 icon: Icons.email,
               ),
               const SizedBox(height: 20),
 
-              // Input Password
               _buildInputField(
                 hintText: 'Masukkan Password',
                 icon: Icons.lock,
@@ -99,7 +96,6 @@ class LoginScreen extends StatelessWidget {
                 height: 55,
                 child: ElevatedButton(
                   onPressed: () {
-                    // Navigasi ke HomeScreen
                     Navigator.pushReplacementNamed(context, '/home');
                   },
                   style: ElevatedButton.styleFrom(
@@ -120,7 +116,6 @@ class LoginScreen extends StatelessWidget {
               ),
               const SizedBox(height: 15),
 
-              // Lupa Password
               TextButton(
                 onPressed: () {},
                 child: const Text(
