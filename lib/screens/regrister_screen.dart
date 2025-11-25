@@ -44,6 +44,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       final password = _passwordController.text.trim();
 
       // --- Tahap 1: Registrasi Pengguna (Auth) ---
+      // Ini membuat entri di auth.users dan mengirim email verifikasi (jika diaktifkan)
       final authResponse = await supabase.auth.signUp(
         email: email,
         password: password,
@@ -51,18 +52,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       final user = authResponse.user;
       if (user == null) {
-        throw Exception('Gagal mendaftarkan pengguna. Coba lagi.');
+        // Ini menangkap error jika sign up gagal tanpa throw exception (misal: RLS Auth error)
+        throw Exception('Registrasi Auth gagal. Cek kembali setting Supabase Auth.');
       }
 
       // --- Tahap 2: Simpan Data Profil Tambahan (Database) ---
       final profileData = {
-        'id': user.id, // Gunakan ID dari Auth untuk kunci utama di tabel profiles
+        'id': user.id, // Kunci utama dan foreign key ke auth.users
         'email': email,
         'nama_lengkap': _nameController.text.trim(),
         'angkatan': _angkatanController.text.trim(),
-        'jurusan': _fakultasController.text.trim(), // Asumsi 'fakultas' disimpan di kolom 'jurusan'
+        // Sesuaikan kolom di Supabase: kita asumsikan kolomnya 'jurusan'
+        'jurusan': _fakultasController.text.trim(),
       };
 
+      // Pastikan RLS di tabel 'profiles' mengizinkan INSERT oleh pengguna yang baru terautentikasi.
       await supabase.from('profiles').insert(profileData);
 
       // --- Tahap 3: Selesai ---
@@ -75,9 +79,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     } catch (e) {
       if (mounted) {
+        // Tampilkan pesan error yang lebih bersih
+        final errorMessage = e.toString().contains('message: ')
+            ? e.toString().split('message: ').last.split(', statusCode:')[0]
+            : e.toString();
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: ${e.toString()}'),
+            content: Text('Error: $errorMessage'),
             backgroundColor: Colors.redAccent,
           ),
         );
@@ -153,7 +162,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 const Text(
-                  'Buat Akun EVENTSOGO!',
+                  'Buat Akun EVENTSONGO!',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
